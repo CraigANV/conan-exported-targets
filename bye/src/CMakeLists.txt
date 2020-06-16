@@ -8,7 +8,6 @@ set(${TARGET_NAME}_SRC bye.cpp)
 set(${TARGET_NAME}_HEADERS bye.h)
 set(DEBUG_LIBRARY_SUFFIX "d")
 
-
 # GENERIC PART
 add_library(${TARGET_NAME} ${${TARGET_NAME}_SRC} ${${TARGET_NAME}_HEADERS})
 set_target_properties(${TARGET_NAME} PROPERTIES
@@ -21,7 +20,6 @@ target_include_directories(${TARGET_NAME} PUBLIC
 
 find_package(hello CONFIG)
 target_link_libraries(${TARGET_NAME} hello::hello)
-
 
 # Write the library and headers
 install(TARGETS ${TARGET_NAME} EXPORT ${TARGET_NAME}Targets

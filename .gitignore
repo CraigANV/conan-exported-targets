@@ -1,2 +1,6 @@
 build/
 bld/
+cmake-build-*/
+.idea/
+*.log
+venv/
