@@ -9,7 +9,7 @@ class ByeConan(ConanFile):
     default_options = "shared=False"
     generators = "cmake_paths"
     exports_sources = "src/*"
-    requires = "hello/1.0@user/channel"
+    requires = (("hello/1.0@user/channel", "private"), ("boost/1.73.0", ))
 
     def build(self):
         for bt in ("Debug", "Release"):

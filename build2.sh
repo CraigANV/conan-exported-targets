@@ -10,19 +10,6 @@ function mkcd()
   rm -rf "$1" && mkdir "$1" && pushd "$1"
 }
 
-function revert_conan_uninstall()
-{
-  # revert simulated uninstall (if present)
-  if [[ -d ~/.conan/data.bk ]]; then
-    mv ~/.conan/data.bk ~/.conan/data
-  fi
-}
-
-function conan_uninstall()
-{
-  mv ~/.conan/data ~/.conan/data.bk # simulate uninstall to save time
-}
-
 # Remove old 'hello' and 'bye' installs
 sudo rm -rf /usr/local/include/hello.h \
             /usr/local/include/bye.h \
@@ -32,6 +19,11 @@ sudo rm -rf /usr/local/include/hello.h \
             /usr/local/lib/cmake/bye/
 conan remove -f hello
 
+# Remove any apt install packages that may confuse things
+readonly APT_PACKAGES="libboost-all-dev libboost-dev"
+sudo apt purge -y $APT_PACKAGES
+sudo apt autoremove -y
+
 # Create 'hello' Conan package
 pushd hello
 conan create . user/channel
@@ -40,7 +32,7 @@ popd
 # Build 'bye' library against 'hello' Conan package and install to /usr/local/
 pushd bye/src
 mkcd "build"
-conan install ..
+conan install ../.. # Install using conanfile.py
 cmake .. -DCMAKE_TOOLCHAIN_FILE=conan_paths.cmake -DCMAKE_BUILD_TYPE=Debug
 cmake --build .
 sudo cmake --install .
@@ -65,6 +57,10 @@ sudo cmake --install .
 
 popd
 popd
+
+# Remove Conan 'boost' package and install using apt instead
+conan remove -f boost
+sudo apt install libboost-all-dev -y
 
 # Build project against /usr/local/ versions of 'hello' and 'bye'
 pushd project

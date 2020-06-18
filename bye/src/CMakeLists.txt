@@ -3,10 +3,15 @@ cmake_minimum_required(VERSION 3.0)
 # CHANGE PROJECT NAME, SOURCES AND DEPENDANT TARGETS
 project(bye CXX)
 
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
+
 set(TARGET_NAME ${PROJECT_NAME})
 set(${TARGET_NAME}_SRC bye.cpp)
 set(${TARGET_NAME}_HEADERS bye.h)
 set(DEBUG_LIBRARY_SUFFIX "d")
+
+find_package(hello CONFIG)
+find_package(Boost COMPONENTS regex chrono REQUIRED)
 
 # GENERIC PART
 add_library(${TARGET_NAME} ${${TARGET_NAME}_SRC} ${${TARGET_NAME}_HEADERS})
@@ -16,10 +21,12 @@ set_target_properties(${TARGET_NAME} PROPERTIES
 
 target_include_directories(${TARGET_NAME} PUBLIC
                            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                           "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
+                           "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>"
+                            ${Boost_INCLUDE_DIRS})
 
-find_package(hello CONFIG)
-target_link_libraries(${TARGET_NAME} hello::hello)
+target_link_libraries(${TARGET_NAME}
+                      hello::hello
+                      ${Boost_LIBRARIES})
 
 # Write the library and headers
 install(TARGETS ${TARGET_NAME} EXPORT ${TARGET_NAME}Targets

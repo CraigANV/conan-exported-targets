@@ -1,5 +1,0 @@
-[requires]
-hello/1.0@user/channel
-
-[generators]
-cmake_paths
